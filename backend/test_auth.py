@@ -88,10 +88,18 @@ def test_unauthenticated_rejected():
             # FastAPI returns 422 when a required Header is missing entirely
             ok(f"{method} {url.split(BASE_URL)[1]} → 422 (missing header) ✓")
         else:
-            fail(f"{method} {url.split(BASE_URL)[1]} → expected 401/422, got {r.status_code}: {r.text}")
+            status_got = f"{r.status_code}: {r.text}"
+            fail(
+                f"{method} {url.split(BASE_URL)[1]}"
+                f" → expected 401/422, got {status_got}"
+            )
 
     # Wrong token format
-    r = requests.get(f"{BASE_URL}/api/v1/auth/me", headers={"Authorization": "NotBearer abc"}, timeout=10)
+    r = requests.get(
+        f"{BASE_URL}/api/v1/auth/me",
+        headers={"Authorization": "NotBearer abc"},
+        timeout=10,
+    )
     if r.status_code in (401, 422):
         ok(f"Malformed Authorization header → {r.status_code} ✓")
     else:
@@ -126,7 +134,11 @@ def test_scan_history(token: str):
     section("Test 3 — GET /api/v1/scans/history (Paginated)")
 
     headers = {"Authorization": f"Bearer {token}"}
-    r = requests.get(f"{BASE_URL}/api/v1/scans/history?limit=5&offset=0", headers=headers, timeout=10)
+    r = requests.get(
+        f"{BASE_URL}/api/v1/scans/history?limit=5&offset=0",
+        headers=headers,
+        timeout=10,
+    )
 
     if r.status_code != 200:
         fail(f"/scans/history returned {r.status_code}: {r.text}")
@@ -138,7 +150,11 @@ def test_scan_history(token: str):
 
     if data["scans"]:
         first = data["scans"][0]
-        ok(f"First scan: grade={first.get('final_grade')}, type={first.get('image_type')}, ts={first.get('timestamp')}")
+        ok(
+            f"First scan: grade={first.get('final_grade')},"
+            f" type={first.get('image_type')},"
+            f" ts={first.get('timestamp')}"
+        )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -153,7 +169,7 @@ def test_google_oauth_redirect():
     if r.status_code in (302, 307):
         location = r.headers.get("location", "")
         if "accounts.google.com" in location or "supabase" in location:
-            ok(f"Correctly redirects to OAuth provider ✓")
+            ok("Correctly redirects to OAuth provider ✓")
             info(f"Redirect → {location[:80]}...")
         else:
             ok(f"Got redirect to: {location[:80]}")

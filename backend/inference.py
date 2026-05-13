@@ -75,26 +75,28 @@ def load_models(stream_a_path: str, stream_b_path: str):
     Run this once on server startup.
     """
     global stream_a_model, stream_b_model
-    
+
     # Load Stream A (Body)
     stream_a_model = get_stream_a_model()
-    stream_a_model.load_state_dict(torch.load(stream_a_path, map_location=device, weights_only=True))
+    stream_a_model.load_state_dict(
+        torch.load(stream_a_path, map_location=device, weights_only=True)
+    )
     stream_a_model.to(device)
     stream_a_model.eval()
 
     # Load Stream B (Biomarker - Eyes/Gills)
     stream_b_model = BiomarkerCNN()
     checkpoint_b = torch.load(stream_b_path, map_location=device, weights_only=False)
-    
+
     # Check if this is a full checkpoint dictionary or just a state_dict
     if isinstance(checkpoint_b, dict) and 'model_state_dict' in checkpoint_b:
         stream_b_model.load_state_dict(checkpoint_b['model_state_dict'])
     else:
         stream_b_model.load_state_dict(checkpoint_b)
-        
+
     stream_b_model.to(device)
     stream_b_model.eval()
-    
+
 # --- Forward Pass Inference ---
 @torch.no_grad()
 def predict_stream_a(image: Image.Image):
@@ -105,7 +107,9 @@ def predict_stream_a(image: Image.Image):
 
 @torch.no_grad()
 def predict_stream_b(image: Image.Image):
-    """Returns raw logits for Stream B (Micro-crops) [Fresh_Eyes, Fresh_Gills, Nonfresh_Eyes, Nonfresh_Gills]"""
+    """Returns raw logits for Stream B (Micro-crops)
+    [Fresh_Eyes, Fresh_Gills, Nonfresh_Eyes, Nonfresh_Gills]
+    """
     tensor = stream_b_transforms(image).unsqueeze(0).to(device)
     logits = stream_b_model(tensor)
     return logits.squeeze(0).cpu().numpy()

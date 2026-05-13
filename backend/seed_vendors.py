@@ -82,7 +82,10 @@ def main():
             else:
                 print(f"  FAILED {v['name']}: {e}")
 
-    print("\nDone. If you saw 'base' inserts, run the SQL migration in Supabase then re-run this script.")
+    print(
+        "\nDone. If you saw 'base' inserts, run the SQL migration "
+        "in Supabase then re-run this script."
+    )
 
 
 if __name__ == "__main__":

@@ -61,7 +61,10 @@ supabase_service: Optional[Client] = (
 def _db() -> Client:
     client = supabase_service or supabase
     if client is None:
-        raise HTTPException(status_code=503, detail="Database client not configured. Set SUPABASE_KEY.")
+        raise HTTPException(
+            status_code=503,
+            detail="Database client not configured. Set SUPABASE_KEY.",
+        )
     return client
 
 
@@ -211,9 +214,21 @@ def _build_scan_payload(
             "catch_age_hours":    6,
         },
         "biomarkers": {
-            "gill_saturation":  {"score": gill_score, "status": _status(gill_score), "detail": _gill_detail(gill_score)},
-            "corneal_clarity":  {"score": eye_score,  "status": _status(eye_score),  "detail": _eye_detail(eye_score)},
-            "epidermal_tension":{"score": body_score, "status": _status(body_score), "detail": _body_detail(body_score)},
+            "gill_saturation": {
+                "score": gill_score,
+                "status": _status(gill_score),
+                "detail": _gill_detail(gill_score),
+            },
+            "corneal_clarity": {
+                "score": eye_score,
+                "status": _status(eye_score),
+                "detail": _eye_detail(eye_score),
+            },
+            "epidermal_tension": {
+                "score": body_score,
+                "status": _status(body_score),
+                "detail": _body_detail(body_score),
+            },
         },
         "recommendations": {
             "consume_within_hours": consume_hours,
@@ -233,9 +248,15 @@ def _row_to_payload(row: dict) -> dict:
 
     if not bm:
         bm = {
-            "gill_saturation":   {"score": freshness, "status": _status(freshness), "detail": _gill_detail(freshness)},
-            "corneal_clarity":   {"score": freshness, "status": _status(freshness), "detail": _eye_detail(freshness)},
-            "epidermal_tension": {"score": freshness, "status": _status(freshness), "detail": _body_detail(freshness)},
+            "gill_saturation": {
+                "score": freshness, "status": _status(freshness), "detail": _gill_detail(freshness)
+            },
+            "corneal_clarity": {
+                "score": freshness, "status": _status(freshness), "detail": _eye_detail(freshness)
+            },
+            "epidermal_tension": {
+                "score": freshness, "status": _status(freshness), "detail": _body_detail(freshness)
+            },
         }
 
     return {
@@ -318,7 +339,10 @@ async def get_me(current_user=Depends(get_current_user)):
         "id":        current_user.id,
         "email":     current_user.email,
         "full_name": current_user.user_metadata.get("full_name"),
-        "avatar_url":current_user.user_metadata.get("avatar_url") or current_user.user_metadata.get("picture"),
+        "avatar_url": (
+            current_user.user_metadata.get("avatar_url")
+            or current_user.user_metadata.get("picture")
+        ),
     }
 
 
@@ -429,7 +453,10 @@ async def scan_auto(
     image_type = classify_image_type(img)
 
     if image_type == ImageType.NOT_A_FISH:
-        raise HTTPException(status_code=422, detail="Uploaded image does not appear to contain a fish.")
+        raise HTTPException(
+            status_code=422,
+            detail="Uploaded image does not appear to contain a fish.",
+        )
 
     body_logits = predict_stream_a(img)
     eye_logits  = predict_stream_b(img)
@@ -560,9 +587,13 @@ async def get_scan_by_id(scan_id: str, current_user=Depends(get_current_user)):
 @app.get("/api/v1/vendors")
 async def get_vendors():
     try:
+        fields = (
+            "id, name, address, lat, lng, "
+            "trust_score, total_scans, avg_freshness_score, vendor_count"
+        )
         resp = (
             _db().table("vendors")
-            .select("id, name, address, lat, lng, trust_score, total_scans, avg_freshness_score, vendor_count")
+            .select(fields)
             .execute()
         )
         return {"success": True, "vendors": resp.data}
@@ -595,7 +626,11 @@ async def get_markets():
         return {"success": True, "markets": markets}
     except Exception:
         # Migration not applied yet — return empty markets, map still renders
-        return {"success": True, "markets": [], "warning": "Run SQL migration and seed vendors for map data."}
+        return {
+            "success": True,
+            "markets": [],
+            "warning": "Run SQL migration and seed vendors for map data.",
+        }
 
 
 # ── GRAD-CAM ──────────────────────────────────────────────────────────────────

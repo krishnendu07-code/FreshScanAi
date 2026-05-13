@@ -60,18 +60,18 @@ def is_valid_fish_image(image: Image.Image) -> tuple[bool, float]:
     """
     model = _get_gate_model()
     tensor = _gate_transform(image).unsqueeze(0)
-    
+
     with torch.no_grad():
         logits = model(tensor)
         probs = torch.softmax(logits, dim=1).squeeze(0)
 
     # Check top 5 predictions for any fish class
     top5_probs, top5_indices = torch.topk(probs, 5)
-    
+
     for idx, prob in zip(top5_indices.tolist(), top5_probs.tolist()):
         if idx in FISH_CLASS_INDICES:
             return True, prob
-    
+
     # Return the highest score seen among fish classes (even if they didn't make top 5)
     fish_score = max(probs[i].item() for i in FISH_CLASS_INDICES)
     return False, fish_score
@@ -142,10 +142,10 @@ def classify_image_type(image: Image.Image) -> ImageType:
     # --- Step 0: Fish Validity Gate ---
     is_fish, gate_score = is_valid_fish_image(image)
     print(f"   [Router Trace] Fish gate: {'PASS' if is_fish else 'FAIL'} (Score: {gate_score:.2%})")
-    
+
     if not is_fish:
         return ImageType.NOT_A_FISH
-    
+
     # Resize to a standard working size for consistent analysis
     img = image.copy()
     img.thumbnail((512, 512))

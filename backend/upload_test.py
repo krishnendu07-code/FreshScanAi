@@ -13,7 +13,7 @@ def run_upload_test():
     # Hide the main tkinter window
     root = tk.Tk()
     root.withdraw()
-    
+
     # Force window to top
     root.attributes('-topmost', True)
 
@@ -48,12 +48,12 @@ def run_upload_test():
         return
 
     print("Running Inference...")
-    
+
     # Pass the SAME image through both models to see what they output
     try:
         logits_a = predict_stream_a(image)
         logits_b = predict_stream_b(image)
-        
+
         # Get calibrated probabilities
         probs_a = apply_temperature_scaling(logits_a).tolist()
         probs_b = apply_temperature_scaling(logits_b).tolist()
@@ -77,7 +77,7 @@ def run_upload_test():
         print(f" -> Nonfresh Eyes  : {probs_b[2]:.2%}")
         print(f" -> Nonfresh Gills : {probs_b[3]:.2%}")
         print("=======================================================\n")
-        
+
         print("Note: Stream B expects tight crops of the eye/gill for maximum accuracy.")
 
     except Exception as e:

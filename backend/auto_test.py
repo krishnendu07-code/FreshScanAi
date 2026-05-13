@@ -13,7 +13,7 @@ def run_auto_test():
     # Hide the main tkinter window
     root = tk.Tk()
     root.withdraw()
-    
+
     # Force window to top
     root.attributes('-topmost', True)
 
@@ -69,7 +69,7 @@ def run_auto_test():
 
     # Step 2: Route to appropriate specialized module
     print("\n[INFERENCE] Pushing image specifically to specialized module...")
-    
+
     try:
         if image_type == ImageType.BODY:
             results = scan_whole_body(image)
@@ -78,7 +78,7 @@ def run_auto_test():
             print("====================================")
             for k, v in results.items():
                 print(f" -> {k:12}: {v:.2%}")
-                
+
         elif image_type == ImageType.EYE:
             results = scan_eyes(image)
             print("====================================")
@@ -86,7 +86,7 @@ def run_auto_test():
             print("====================================")
             for k, v in results.items():
                 print(f" -> {k:12}: {v:.2%}")
-                
+
         elif image_type == ImageType.GILL:
             results = scan_gills(image)
             print("====================================")
@@ -94,17 +94,20 @@ def run_auto_test():
             print("====================================")
             for k, v in results.items():
                 print(f" -> {k:12}: {v:.2%}")
-                
+
         else:
             print("====================================")
             print("           UNKNOWN FORMAT           ")
             print("====================================")
-            print("The router could not detect with high confidence whether this was a Body, Eye, or Gill.")
+            print(
+                "The router could not detect with high confidence "
+                "whether this was a Body, Eye, or Gill."
+            )
             print("Falling back to full Stream A processing as a safety default.")
             results = scan_whole_body(image)
             for k, v in results.items():
                 print(f" -> {k:12}: {v:.2%}")
-                
+
         print("====================================\n")
 
     except Exception as e:
