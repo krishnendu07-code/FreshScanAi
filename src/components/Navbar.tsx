@@ -13,11 +13,15 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let ignore = false;
     if (loggedIn) {
-      api.getMe().then(setProfile).catch(console.error);
+      api.getMe()
+        .then(p => { if (!ignore) setProfile(p); })
+        .catch(console.error);
     } else {
-      setProfile(null);
+      Promise.resolve().then(() => { if (!ignore) setProfile(null); });
     }
+    return () => { ignore = true; };
   }, [loggedIn]);
 
   useEffect(() => {

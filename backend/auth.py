@@ -1,7 +1,6 @@
 import os
 import uuid
 from fastapi import HTTPException, Header
-from fastapi.responses import RedirectResponse
 from supabase import create_client, Client
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")

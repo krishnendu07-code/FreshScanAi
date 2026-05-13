@@ -2,7 +2,6 @@ import numpy as np
 from PIL import Image
 from enum import Enum
 import torch
-import torch.nn as nn
 from torchvision import models, transforms
 
 

@@ -19,16 +19,17 @@ export default function AuthPage() {
     const error = params.get('error');
 
     if (error) {
-      setStatus('error');
-      setErrorMsg('Authentication failed. Please try again.');
+      Promise.resolve().then(() => {
+        setStatus('error');
+        setErrorMsg('Authentication failed. Please try again.');
+      });
       window.history.replaceState({}, '', '/auth');
       return;
     }
 
     if (accessToken) {
-      setStatus('processing');
+      Promise.resolve().then(() => setStatus('processing'));
       setToken(accessToken);
-      // Clean the URL
       window.history.replaceState({}, '', '/auth');
       navigate('/mode', { replace: true });
       return;

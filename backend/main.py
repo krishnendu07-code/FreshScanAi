@@ -691,7 +691,7 @@ async def generate_gradcam(
         }
 
     # ── Real Grad-CAM path ──────────────────────────────────────────────────────
-    import torch
+    import torch  # noqa: F401
     import numpy as np
     from inference import stream_a_model, stream_a_transforms, device
     from router import is_valid_fish_image
