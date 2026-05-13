@@ -11,7 +11,6 @@ import os
 # Ensure the backend directory is on the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import pytest
 import numpy as np
 
 
