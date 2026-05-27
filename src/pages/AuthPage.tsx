@@ -33,14 +33,6 @@ export default function AuthPage() {
       Promise.resolve().then(() => setStatus('processing'));
       setToken(accessToken);
       window.history.replaceState({}, '', '/auth');
-      // Identify the user in PostHog using their JWT sub claim as the ID.
-      // The token is a JWT; we decode the payload to get the user ID.
-      try {
-        const payload = JSON.parse(atob(accessToken.split('.')[1]));
-        posthog?.identify(payload.sub, { email: payload.email });
-      } catch {
-        // Not a JWT or malformed — skip identification silently
-      }
       navigate('/mode', { replace: true });
       return;
     }
