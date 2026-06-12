@@ -41,12 +41,19 @@ function authHeaders(): Record<string, string> {
 
 // ── Shared Error Handling Logic ──────────────────────────────────────────────
 
-async function handleResponse(res: Response): Promise<Response> {
+async function handleResponse(
+  res: Response,
+  options?: ApiRequestOptions,
+): Promise<Response> {
   if (res.ok) return res;
 
   if (res.status >= 500) {
     const msg = "Server error. Please try again later.";
-    toast.error(msg);
+
+    if (!options?.silent) {
+      toast.error(msg);
+    }
+
     throw new Error(msg);
   }
 
@@ -63,7 +70,7 @@ async function safeFetch(
 ): Promise<Response> {
   try {
     const res = await fetch(input, init);
-    return await handleResponse(res);
+    return await handleResponse(res, options);
   } catch (error) {
     if (error instanceof TypeError && !options?.silent) {
       toast.error(
