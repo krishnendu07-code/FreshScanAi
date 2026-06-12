@@ -274,11 +274,8 @@ export default function ScannerPage() {
                 fused_score: fusion.fusedScore,
                 source: "edge_onnx",
               });
-              if ((saved?.scan as unknown as { scan_id?: string })?.scan_id) {
-                sessionStorage.setItem(
-                  "lastScanId",
-                  (saved.scan as unknown as { scan_id: string }).scan_id,
-                );
+              if (saved?.scan?.scan_id) {
+                sessionStorage.setItem("lastScanId", saved.scan.scan_id);
               }
             } catch {
               /* offline or backend down — result still shown locally */
