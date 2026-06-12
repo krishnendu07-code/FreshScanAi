@@ -184,4 +184,7 @@ export const api = {
 
   getMarkets: (): Promise<MarketsResponse> =>
     apiFetch<MarketsResponse>('/api/v1/maps/markets'),
+
+  getLiveMarkets: (lat: number, lng: number, radius = 15000): Promise<MarketsResponse> =>
+    apiFetch<MarketsResponse>(`/api/v1/maps/markets/live?lat=${lat}&lng=${lng}&radius=${radius}`),
 };
