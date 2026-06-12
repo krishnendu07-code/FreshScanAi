@@ -209,6 +209,7 @@ export default function ScannerPage() {
       startProgress();
       setError("");
       setInferenceMode(null);
+      sessionStorage.removeItem("lastScanId");
 
       // Store preview
       const url = URL.createObjectURL(blob);
@@ -269,11 +270,15 @@ export default function ScannerPage() {
           async (saveBlob) => {
             if (!saveBlob) return;
             try {
-              const saved = await api.submitScan(saveBlob, {
-                freshness_label: fusion.label,
-                fused_score: fusion.fusedScore,
-                source: "edge_onnx",
-              });
+              const saved = await api.submitScan(
+                saveBlob,
+                {
+                  freshness_label: fusion.label,
+                  fused_score: fusion.fusedScore,
+                  source: "edge_onnx",
+                },
+                { silent: true },
+              );
               if (saved?.scan?.scan_id) {
                 sessionStorage.setItem("lastScanId", saved.scan.scan_id);
               }
